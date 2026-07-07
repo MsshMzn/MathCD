@@ -1,0 +1,193 @@
+%#!latexmk -pdfdvi -f main.tex
+%#LPR acroread %s
+
+\RequirePackage{plautopatch}
+\documentclass[paper=a4,
+fontsize=12pt,
+reqno,
+book,
+uplatex,
+dvipdfmx]{jlreq}
+%
+%\jlreqsetup{
+%thebibliography_heading={\chapter*{\refname}},
+%}
+
+%
+%%%%%%%%%%%%%%% Include Package file %%%%%%%%%%%%%%%
+\usepackage{amsmath,amssymb,amsthm}
+%\usepackage{mathrsfs}
+\usepackage{graphicx,color}
+\usepackage{wrapfig}
+\usepackage{newtxtext}
+\usepackage[varg]{newtxmath}
+\usepackage[shortlabels]{enumitem}
+\usepackage{framed}
+%\usepackage{otf}
+\usepackage[deluxe]{otf}
+\usepackage[unicode,noalphabet]{pxchfon}
+\setminchofont{BIZUDMincho-Regular.ttf}
+\setgothicfont{BIZUDGothic-Regular.ttf}
+\setboldgothicfont{BIZUDGothic-Bold.ttf}
+
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+
+%\usepackage{input/chapterJP}
+%
+%%%%%%%%%%%%%%% Paper size settings %%%%%%%%%%%%%%%
+%
+%
+\usepackage{geometry}%
+\geometry{left=20mm,right=20mm,top=15mm,bottom=25mm}
+\geometry{a4paper}
+%
+
+
+%%%%%%%%%%%%%%% index settings %%%%%%%%%%%%%%%
+%
+%
+\usepackage{makeidx}%
+\makeindex
+
+%%%%%%%%%%%%%%% references settings %%%%%%%%%%%%%%%
+%
+%
+\usepackage{amsrefs}
+%\usepackage[alphabetic,y2k]{amsrefs}
+\renewcommand{\bibname}{参考文献}
+
+%\usepackage[
+%backend=biber,
+%style=alphabetic,
+%]{biblatex}
+%\ExecuteBibliographyOptions{sorting=nty,maxnames=8,minnames=1,url=false}
+%\addbibresource{references.bib}
+
+
+%%%%%%%%%%%%%%% mathtools %%%%%%%%%%%%%%%
+%
+\usepackage{mathtools}
+\mathtoolsset{showonlyrefs=true}
+%
+%
+%
+%%%%%%%%%%%%%%% hyperref %%%%%%%%%%%%%%%
+%
+\usepackage{hyperref}
+\usepackage{pxjahyper}
+\hypersetup{%
+ bookmarksnumbered=true,%
+ colorlinks=false,%
+ setpagesize=false,%
+ pdftitle={数学キャリアデザイン},%
+ pdfauthor={水野将司},%
+ pdfsubject={},%
+ pdfkeywords={}
+}
+%
+%
+%
+%%%%%%%%%%%%%%% Setting of Theorem-like environment %%%%%%%%%%%%%%%
+% [Italic font in Theorem-like environment]
+%\theoremstyle{definition} % if change the roman font
+\theoremstyle{definition} % Change the Roman font
+%\newtheorem{definition}{定義}[chapter]
+\newtheorem{theorem}{定理}[chapter]
+\newtheorem{proposition}[theorem]{命題}
+\newtheorem{corollary}[theorem]{系}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{problem}{問題}[chapter]
+\newtheorem{example}{例}[chapter]
+\newtheorem*{example*}{例}
+\newtheorem{definition}{定義}[chapter]
+\newtheorem*{remark}{注意}
+%
+ 
+%
+%%%%%%%%%% Proof %%%%%
+\renewcommand{\proofname}{証明}  
+% ((Use the environment in proof))
+% \begin{proof}
+% \end{proof}
+% white box in the end of proof
+%
+%
+% make new QED
+% \QED{foo}
+% we write a black box in the right and output foo after the black box
+\newcommand{\QED}[1]{\hfill$\blacksquare$ #1\par}
+% 
+%
+%
+%%%%%%%%% 1.1 times Line stretch %%%%%%%%%
+% If you do not use Japanese, that command should be commented out.
+%
+%
+%%%%%%% Mathematical symbols %%%%%%%%%%%%%
+%
+\input{mymacro.tex}
+%
+%%%%%%%%%%%%%%% Counter setting in the equation's reference %%%%%%%%%%%%%%%
+% For amsart, use this counter setting
+%
+\numberwithin{equation}{chapter}
+%
+%%% Definition of the \section (not use the \scshape)
+%
+
+
+%%%%%%%%%%%%%%% temporary Package %%%%%%%%%%%%%%%
+
+%\usepackage{showkeys}   % Output of cite and reference
+%\usepackage{refcheck}   % check of no uselabel 
+
+%%%%%%%%%%%%%%% title Setting %%%%%%%%%%%%%%%
+%
+%
+\title{数学キャリアデザイン}
+\author{水野 将司}
+%
+%
+%
+%%%%%%%%%%%%%%% page style setting %%%%%%%%%%%%%%%
+%
+\allowdisplaybreaks[1]
+\DeclareMathOperator{\rot}{rot}
+\let\Re\relax
+\let\Im\relax
+\DeclareMathOperator{\Re}{Re}
+\DeclareMathOperator{\Im}{Im}
+
+\usepackage{bm}
+\renewcommand{\vec}[1]{\bm{#1}}
+
+
+%
+%%%%%%%%%%%%%%% end preamble %%%%%%%%%%%%%%%
+%
+\begin{document}
+%\maketitle
+
+% \begin{flushright}
+%  更新日時 : \the\year.\the\month.\the\day
+% \end{flushright}
+
+
+\input{2026}
+
+
+% bibtex Settings
+\bibliography{references}
+
+
+\printindex
+
+\end{document}
+
+% Local Variables:
+% mode: yatex
+% TeX-master: t
+% End:
+

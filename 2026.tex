@@ -1,0 +1,362 @@
+%#!latexmk -pdfdvi -f main.tex
+
+
+\chapter{微分方程式の数値計算と散逸則(2026年度)}
+
+散逸則を持つ常微分方程式を例にとり，数値計算法と散逸則との関係をみる．
+
+
+ \section{常微分方程式}
+
+ 次の常微分方程式を考える:
+ \begin{equation}
+  \tag{ODE}
+   \label{eq:2026.ODE}
+   \left\{
+    \begin{aligned}
+     x'(t) &= -f_x(x(t)), & t > 0 \\
+     x(0) &= x_0 \in \mathbb{R}
+    \end{aligned}
+   \right.
+ \end{equation}
+ ここで，$x = x(t) : [0, \infty) \rightarrow \mathbb{R}$ は未知関数，$f =
+ f(x) : \mathbb{R} \rightarrow \mathbb{R}$ は与えられた非負値関数，$x_0
+ \in \mathbb{R}$ は与えられた初期値である．
+
+ \eqref{eq:2026.ODE}の解に対して，次の散逸則が成り立つ．
+
+ \begin{proposition}[散逸則(微分型)]
+  $x = x(t)$ を \eqref{eq:2026.ODE} の解とすると，すべての$t>0$に対して
+  \begin{equation}
+   \label{eq:2026.LawEnergyDissipation_DiffForm}
+    \frac{d}{dt} f(x(t)) = -|f_x(x(t))|^2
+  \end{equation}
+  が成り立つ．
+ \end{proposition}
+
+ \begin{proof}
+  合成関数の微分法と~\eqref{eq:2026.ODE} より，
+  \begin{equation}
+  \frac{d}{dt} f(x(t))
+   =
+   f_x(x(t))
+   \frac{dx}{dt}(t)
+   =
+   f_x(x(t))
+   \cdot
+   (-f_x(x(t)))
+   =
+   -|f_x(x(t))|^2
+  \end{equation}
+  が得られる．
+ \end{proof}
+
+ \eqref{eq:2026.LawEnergyDissipation_DiffForm}を $0 \le t \le T$ で積分す
+ ると，次の積分型の散逸則がわかる:
+ \begin{equation}
+  \label{eq:2026.LawEnergyDissipation_IntegralForm}
+   f(x(T)) = f(x(0)) - \int_{0}^{T} |f_x(x(t))|^2 \, dt
+ \end{equation}
+
+ \section{常微分方程式の計算例}
+
+ $f$を具体的に与えて微分方程式~\eqref{eq:2026.ODE}の解を求めてみる．
+
+ \begin{example}
+  $f(x) = \frac{1}{2}x^2$とすると， $f_x(x) = x$となるか
+  ら，~\eqref{eq:2026.ODE}は
+  \begin{equation}
+   \left\{
+    \begin{aligned}
+     x'(t) &= -x(t), & t > 0 \\
+     x(0) &= x_0 \in \mathbb{R}
+    \end{aligned}
+	 \right.
+  \end{equation}
+  となる．この解は$x(t)=x_0e^{-t}$である．
+ \end{example}
+
+ \begin{example}
+  $f(x) =  \frac{1}{4}x^4$とすると， $f_x(x) = x^3$となるか
+  ら，~\eqref{eq:2026.ODE}は
+  \begin{equation}
+   \left\{
+    \begin{aligned}
+     x'(t) &= -(x(t))^3, & t > 0 \\
+     x(0) &= x_0 \in \mathbb{R}
+    \end{aligned}
+	 \right.
+  \end{equation}
+  となる．これは陽的に解けて
+  \begin{equation}
+   x(t)
+    =
+    \begin{cases}
+     \frac{1}{\sqrt{2t+x_0^2}} & (x_0>0)\\
+     0 & (x_0=0) \\
+     -\frac{1}{\sqrt{2t+x_0^2}} & (x_0<0)\\
+    \end{cases}
+  \end{equation}
+  となる．
+ \end{example}
+
+ \begin{example}
+  $f(x) = 1 + \cos x$とすると，$f_x(x) =-\sin x$となるか
+  ら，~\eqref{eq:2026.ODE}は
+  \begin{equation}
+   \left\{
+    \begin{aligned}
+     x'(t) &= \sin(x(t)), & t > 0 \\
+     x(0) &= x_0 \in \mathbb{R}
+    \end{aligned}
+	 \right.
+  \end{equation}
+  となる．これは陽的に解けて
+  \begin{equation}
+   x(t)
+    =
+    \begin{cases}
+     \frac{1}{\sqrt{2t+x_0^2}} & (x_0>0)\\
+     0 & (x_0=0) \\
+     -\frac{1}{\sqrt{2t+x_0^2}} & (x_0<0)\\
+    \end{cases}
+  \end{equation}
+  となる．この解は$x(t) = 2 \arctan(\tan(x_0/2) e^t)$である．
+ \end{example}
+
+ \begin{example}
+  $f(x) = e^{x^2}$とすると，$f_x(x) =2e^{x^2}$となるか
+  ら，~\eqref{eq:2026.ODE}は
+  \begin{equation}
+   \left\{
+    \begin{aligned}
+     x'(t) &= -2(x(t))e^{(x(t))^2}, & t > 0 \\
+     x(0) &= x_0 \in \mathbb{R}
+    \end{aligned}
+	 \right.
+  \end{equation}
+  となる．これは陽的に解けないらしい．
+ \end{example}
+
+
+ \section{数値的に求める}
+
+ 一般的に~\eqref{eq:2026.ODE}の解は陽的に書けないことの方が多い．そこで，
+ 微分を差分におきかえて，近似解を探すことを試みる．
+
+ 微分係数の定義
+ \begin{equation}
+  x'(t)
+   =
+   \lim_{\Delta t \rightarrow 0}
+   \frac{x(t+\Delta t) - x(t)}{\Delta t}
+ \end{equation}
+ において，十分小さい時間刻み幅 $\Delta t > 0$ を固定して，
+ \begin{equation}
+  \label{eq:2006.Derivative_Approx}
+  x'(t) \approx \frac{x(t+\Delta t) - x(t)}{\Delta t}
+ \end{equation}
+ と近似すると，~\eqref{eq:2026.ODE}は次のように差分化できる:
+ \begin{equation}
+  \frac{x(t+\Delta t) - x(t)}{\Delta t} = -f_x(x(t))
+ \end{equation}
+ これを$x(t+\Delta t)$について解いて
+ \begin{equation}
+  x(t+\Delta t) = x(t) - \Delta t f_x(x(t))
+ \end{equation}
+ としよう．時間ステップを $t = 0, \Delta t, 2\Delta t, 3\Delta t, \dots$
+ と進めると，
+ \begin{align}
+  x(\Delta t) &= x(0) - \Delta t f_x(x(0)), \\
+  x(2\Delta t) &= x(\Delta t) - \Delta t f_x(x(\Delta t)), \\
+  x(3\Delta t) &= x(2\Delta t) - \Delta t f_x(x(2\Delta t)),
+ \end{align}
+ となる。$a_n = x(n\Delta t)$ ($n = 0, 1, 2, \dots$) とおくと，
+ 次の漸化式を解く問題に変形できる:
+\begin{equation}
+ \label{eq:2006.FDM}
+  \begin{cases}
+   a_{n+1} = a_n - \Delta t f_x(a_n) ,\qquad n=0,1,2,\ldots\\
+   a_0 = x_0
+  \end{cases}
+  \tag{RE}
+\end{equation}
+目的の時間 $T > 0$ における値 $x(T)$ を求めたいときは，$N\Delta t \ge T$
+となるようなステップ数 $N$ （すなわち $N \ge \frac{T}{\Delta t}$）を決め
+ればよい．
+
+ \section{漸化式をみたす数列を求めるスキーム}
+
+ \eqref{eq:2006.FDM}をみたす数列を求めるスキームの構成は以下の通りとなる．
+
+  \subsection*{与える定数}
+  \begin{itemize}
+   \item 初期値 $x_0\in\R$
+   \item 時間刻み幅 $\Delta t > 0$
+   \item 最終時間 $T > 0$
+  \end{itemize}
+  ここから，総ステップ数$N$を
+  \begin{equation}
+   N = \text{切り上げ}\left(\frac{T}{\Delta t}\right)
+  \end{equation}
+  で求める．
+
+  \subsection*{与える関数}
+  \begin{itemize}
+   \item 非負値関数 $f:\R\rightarrow\R$
+  \end{itemize}
+  ここから，$f$の導関数$f_x$を計算する．
+
+  \begin{remark}
+   $f$は与えられた関数だから，その導関数$f_x$は厳密に計算できる．従って，
+   \eqref{eq:2006.Derivative_Approx}のような近似計算は必要ない．しかしな
+   がら，導関数を求める計算は「記号計算」と呼ばれるもので，「数値計算」
+   とは異なる方法をとる(mathematicaも記号計算ができる)．そこで，pythonの
+   プログラミングでは，「記号計算」ができるライブラリであるsympyを使って，
+   与えられた$f$から微分を「記号計算」で計算させる．その後，sympyの
+   lambdify関数を使って，「記号計算」として定めた関数を「数値計算」に利
+   用できるように変換するようにした．
+  \end{remark}
+
+  \subsection*{初期化}
+  numpy型の配列 $a_0, a_1, a_2, \dots, a_N$を$a_0=a_1=a_2=\ldots
+  =a_N=0.0$で初期化する．そのあと，$a_0 = x_0$と置く．
+
+  \subsection*{繰返計算(漸化式を求める)}
+  $n = 0, 1, 2, \dots, N-1$ について，以下の代入文を繰り返し実行する:
+  \begin{equation}
+   a_{n+1} = a_n - \Delta t f_x(a_n).
+  \end{equation}
+
+
+ \section{近似解で散逸則は成り立つか}
+
+ 上記で得られた$a_N\approx x(T)$に対して，積分型の散逸
+ 則~\eqref{eq:2026.LawEnergyDissipation_IntegralForm}が成り立つかどうかを
+ 調べる．そのために，積分については台形則を用いることにする．すなわち
+ \begin{multline}
+  \int_0^T|f_x(x(t))|^2\,dt
+  \\
+   =
+   \frac{1}{2}|f_x(x(0))|^2\Delta t
+   +
+   |f_x(x(\Delta t))|^2\Delta t
+   +
+   |f_x(x(2\Delta t))|^2\Delta t
+   +
+   \cdots
+   |f_x(x((N-1)\Delta t))|^2\Delta t
+   +
+   \frac{1}{2}|f_x(x(N\Delta t))|^2\Delta t
+  \\
+  =
+  \left(
+  |f_x(x(0))|^2,|f_x(x(\Delta t))|^2,|f_x(x(2\Delta t))|^2,\ldots,|f_x(x(N\Delta t))|^2
+  \right)
+  \cdot
+  \left(
+  \frac{1}{2},1,1,\ldots,1,\frac{1}{2}
+  \right)
+  \Delta t
+ \end{multline}
+ を用いることにする．~\eqref{eq:2026.LawEnergyDissipation_IntegralForm}が成り立つかどうかをみるために，
+\begin{multline}
+ \left|
+ f(x(T)) -
+ \left(
+  f(x(0))
+  -
+  \int_{0}^{T} |f_x(x(t))|^2 \, dt
+ \right)
+ \right|
+ \\
+ =
+ \left|
+ f(a_N) -
+ \left(
+  f(a_0)
+  -
+ \left(
+  |f_x(a_0)|^2,|f_x(a_1)|^2,|f_x(a_2)|^2,\ldots,|f_x(a_N)|^2
+  \right)
+  \cdot
+  \left(
+  \frac{1}{2},1,1,\ldots,1,\frac{1}{2}
+  \right)
+  \Delta t
+ \right)
+ \right|
+\end{multline}
+を計算させてみよう．
+
+ \section{アルゴリズムの詳細と実装}
+ 
+ % 必要に応じて、日本語環境用の設定
+ \renewcommand{\algorithmicrequire}{\textbf{Input:}}
+ \renewcommand{\algorithmicensure}{\textbf{Output:}}
+ 
+ 本稿で用いた，常微分方程式~\eqref{eq:2026.ODE}の差分法(前進オイラー法)に
+ よる数値シミュレーション，およびエネルギー関数の時間変化(台形公式による
+ 積分)を検証するための具体的な計算手順を以下に示す．
+
+  \subsection{計算アルゴリズム}
+  
+  時間ステップ幅を $\Delta t$，最終時刻を $T$ とし，反復回数を $N =
+  \lceil T / \Delta t \rceil$ とする．初期値 $x_0$ から出発し，関数
+  $f(x)$ に対する速度場 $v(x) = - \frac{df}{dx}$ を用いて状態 $a_n
+  \approx x(n\Delta t)$ を更新する．また，エネルギーの保存(減少)誤差を台
+  形公式による数値積分を用いて評価する．
+  
+  \begin{algorithm}[H]
+   \caption{前進オイラー法による軌道計算とエネルギー変化の検証}
+   \label{alg:forward_euler}
+   \begin{algorithmic}[1]
+    \REQUIRE 初期値 $x_0$, 時間刻み幅 $\Delta t$, 最終時刻 $T$, 評価対象の関数 $f(x)$
+    \ENSURE 状態の履歴 $\{a_n\}_{n=0}^N$, エネルギー誤差 $\mathcal{E}$
+    \STATE $N \leftarrow \lceil T / \Delta t \rceil$ \COMMENT{総反復回数の決定}
+    \STATE $v(x) \leftarrow - \frac{df}{dx}$ \COMMENT{速度関数（導関数）の定義}
+    \STATE 配列 $a$ をサイズ $N+1$ で初期化
+    \STATE $a_0 \leftarrow x_0$ \COMMENT{初期条件の設定}
+    \FOR{$n = 0$ \TO $N-1$}
+    \STATE $a_{n+1} \leftarrow a_n + \Delta t \cdot v(a_n)$ \COMMENT{前進オイラー法による更新}
+    \ENDFOR
+    \STATE 各時刻 $t_n = n \cdot \Delta t$ ($n=0, \dots, N$) に対する時間配列 $\{t_n\}$ を生成
+    \STATE $y_n \leftarrow |v(a_n)|^2$ ($n=0, \dots, N$) \COMMENT{速度の2乗の計算}
+    \STATE $I \leftarrow \Delta t \left( \frac{1}{2}y_0 + \sum_{n=1}^{N-1} y_n + \frac{1}{2}y_N \right)$ \COMMENT{台形公式による $\int_0^T |v(x(t))|^2 dt$ の近似計算}
+    \STATE $\mathcal{E} \leftarrow \left| f(a_N) - f(0) + I \right|$ \COMMENT{エネルギー誤差の計算}
+\RETURN $\{a_n\}_{n=0}^N$, $\mathcal{E}$
+   \end{algorithmic}
+  \end{algorithm}
+
+  \subsection{プログラムの構成と処理の流れ}
+
+  上記のアルゴリズムを以下の3つのフェーズで実装した．
+  
+  \begin{enumerate}
+   \item \textbf{シンボリック計算（SymPyによる自動微分）}:
+	 %
+	 評価したい関数 $f(x) = \exp(x^2)$ を定義し，その導関数の $-1$
+	 倍である $v(x) = -2x\exp(x^2)$ を自動微分により算出する．その後，
+	 \texttt{lambdify} を用いて高速な数値計算（NumPy）が可能な形式へ
+	 と変換する．
+	 
+   \item \textbf{時間発展のシミュレーション（NumPy）}:
+	 %
+	 前進オイラー法（Forward Euler Method）に基づき，漸化式 $a_{n+1}
+	 = a_n + \Delta t \cdot v(a_n)$ をループ処理によって繰り返し計算
+	 し，状態変数 $x(t)$ の時系列データを取得する．
+    
+    \item \textbf{エネルギー解析と可視化（Matplotlib）}:
+	  %
+	  得られた軌道から，各時刻におけるエネルギー $f(x(t))$ の減衰挙
+	 動をプロットする．さらに，エネルギーの減少量と散逸項の積分値(台
+	 形公式で計算)を比較し，理論解からの数値的な乖離を表す「エネルギー
+	 誤差」を出力する．
+  \end{enumerate}
+
+\section{コメント}
+
+常微分方程式の数値計算については，
+\cites{BC08225057,BA32760992,BB20100756}を参考にせよ．本稿でのソースコー
+ドはpythonを用いた．ソースコード中のライブラリや関数については，
+\cite{BB30665488}を参考にせよ．
